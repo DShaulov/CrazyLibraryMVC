@@ -1,7 +1,10 @@
+using CrazyLibraryMVC.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddSingleton<DatabaseContext>();
 
 var app = builder.Build();
 
