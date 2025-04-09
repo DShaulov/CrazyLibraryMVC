@@ -1,10 +1,18 @@
 using CrazyLibraryMVC.Data;
+using CrazyLibraryMVC.Data.Interfaces;
+using CrazyLibraryMVC.Data.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<DatabaseContext>();
+builder.Services.AddScoped<IBookRepository, BookRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IBookHistoryRepository, BookHistoryRepository>();
+builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+
+
 
 var app = builder.Build();
 

@@ -13,6 +13,11 @@ namespace CrazyLibraryMVC.Data.Repositories
             m_DbContext = dbContext;
         }
 
+        public Task<Customer> GetCustomerByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task InsertCustomerAsync(Customer customer)
         {
             string sql = File.ReadAllText("Sql/Customers/InsertCustomer.sql");
@@ -20,6 +25,11 @@ namespace CrazyLibraryMVC.Data.Repositories
             {
                 await connection.ExecuteAsync(sql, customer);
             }
+        }
+
+        Task<int> ICustomerRepository.InsertCustomerAsync(Customer customer)
+        {
+            throw new NotImplementedException();
         }
     }
 }

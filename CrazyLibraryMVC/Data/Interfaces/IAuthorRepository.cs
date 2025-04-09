@@ -4,6 +4,7 @@ namespace CrazyLibraryMVC.Data.Interfaces
 {
     public interface IAuthorRepository
     {
-        Task InsertAuthorAsync(Author author);
+        Task<int> InsertAuthorAsync(Author author);
+        Task<int?> GetAuthorIdAsync(Author author);
     }
 }

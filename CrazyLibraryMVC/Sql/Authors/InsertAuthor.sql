@@ -8,3 +8,4 @@ VALUES (
     @LastName,
     @BirthDate
 );
+SELECT LAST_INSERT_ID();

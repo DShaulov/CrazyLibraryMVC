@@ -13,6 +13,11 @@ namespace CrazyLibraryMVC.Data.Repositories
             m_DbContext = dbContext;
         }
 
+        public Task<Book> GetBookByIdAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task InsertBookAsync(Book book)
         {
             string sql = File.ReadAllText("Sql/Books/InsertBook.sql");
