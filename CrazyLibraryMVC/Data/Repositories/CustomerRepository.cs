@@ -2,6 +2,7 @@
 using CrazyLibraryMVC.Data.Interfaces;
 using CrazyLibraryMVC.Models;
 using Dapper;
+using Dapper.Contrib.Extensions;
 
 namespace CrazyLibraryMVC.Data.Repositories
 {
@@ -13,23 +14,37 @@ namespace CrazyLibraryMVC.Data.Repositories
             m_DbContext = dbContext;
         }
 
-        public Task<Customer> GetCustomerByIdAsync(int id)
+        public async Task<int> InsertCustomerAsync(Customer customer)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task InsertCustomerAsync(Customer customer)
-        {
-            string sql = File.ReadAllText("Sql/Customers/InsertCustomer.sql");
             using (IDbConnection connection = m_DbContext.CreateConnection())
             {
-                await connection.ExecuteAsync(sql, customer);
+                Customer? existingCustomer = await GetCustomerByPassport(customer.Passport);
+                if (existingCustomer != null)
+                {
+                    int customerId = await connection.InsertAsync<Customer>(customer);
+                    return customerId;
+                }
+                else
+                {
+                    return existingCustomer.Id;
+                }
             }
         }
 
-        Task<int> ICustomerRepository.InsertCustomerAsync(Customer customer)
+        /// <summary>
+        /// Retrieves a customer record by its passport
+        /// </summary>
+        /// <param name="passport"></param>
+        /// <returns>If found, return the customer - otherwise return null</returns>
+        public async Task<Customer?> GetCustomerByPassport(string passport)
         {
-            throw new NotImplementedException();
+            using (IDbConnection connection = m_DbContext.CreateConnection())
+            {
+                string sql = File.ReadAllText("Sql/Customers/GetCustomerByPassport.sql");
+                var parameters = new { Passport = passport };
+                Customer? customer = await connection.QuerySingleOrDefaultAsync<Customer>(sql, parameters);
+                return customer;
+            }
         }
     }
 }

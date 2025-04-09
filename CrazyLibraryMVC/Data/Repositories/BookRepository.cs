@@ -2,6 +2,7 @@
 using CrazyLibraryMVC.Data.Interfaces;
 using CrazyLibraryMVC.Models;
 using Dapper;
+using Dapper.Contrib.Extensions;
 
 namespace CrazyLibraryMVC.Data.Repositories
 {
@@ -13,17 +14,15 @@ namespace CrazyLibraryMVC.Data.Repositories
             m_DbContext = dbContext;
         }
 
-        public Task<Book> GetBookByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task InsertBookAsync(Book book)
         {
-            string sql = File.ReadAllText("Sql/Books/InsertBook.sql");
             using (IDbConnection connection = m_DbContext.CreateConnection())
             {
-                await connection.ExecuteAsync(sql, book);
+                Book? existingBook = await connection.GetAsync<Book>(book.Id);
+                if (existingBook == null) 
+                { 
+                    await connection.InsertAsync(book);
+                }
             }
         }
     }

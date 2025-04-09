@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using Dapper.Contrib.Extensions;
+
 
 namespace CrazyLibraryMVC.Models
 {
+    [Table("Books")]
     public class Book
     {
-        public string? Id { get; set; }
+        [Key]
+        public required string Id { get; set; }
         public required string Title { get; set; }
         public required string Description { get; set; }
         public required int AuthorId { get; set; }

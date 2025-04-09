@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Dapper.Contrib.Extensions;
 
 namespace CrazyLibraryMVC.Models
 {
+    [Table("Customers")]
     public class Customer
     {
+        [Key]
         public int Id { get; set; } // Auto generated
         public required string Passport { get; set; }
         public required string FirstName { get; set; }

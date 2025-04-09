@@ -2,6 +2,7 @@
 using CrazyLibraryMVC.Data.Interfaces;
 using CrazyLibraryMVC.Models;
 using Dapper;
+using Dapper.Contrib.Extensions;
 
 namespace CrazyLibraryMVC.Data.Repositories
 {
@@ -14,6 +15,11 @@ namespace CrazyLibraryMVC.Data.Repositories
             m_DbContext = dbContext;
         }
 
+        /// <summary>
+        /// Checks if an author already exists by matching their FirstName, LastName, and BirthDate.
+        /// </summary>
+        /// <param name="author"></param>
+        /// <returns>The Id of the author or null if not found</returns>
         public async Task<int?> GetAuthorIdAsync(Author author)
         {
             string sql = File.ReadAllText("Sql/Authors/CheckExistingAuthor.sql");
@@ -29,10 +35,9 @@ namespace CrazyLibraryMVC.Data.Repositories
             int? existingAuthorId = await GetAuthorIdAsync(author);
             if (existingAuthorId == null)
             {
-                string sql = File.ReadAllText("Sql/Authors/InsertAuthor.sql");
                 using (IDbConnection connection = m_DbContext.CreateConnection())
                 {
-                    int authorId = await connection.ExecuteScalarAsync<int>(sql, author);
+                    int authorId = await connection.InsertAsync(author);
                     return authorId;
                 }
             }

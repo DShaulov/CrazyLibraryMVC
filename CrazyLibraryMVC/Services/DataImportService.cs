@@ -46,7 +46,7 @@ namespace CrazyLibraryMVC.Services
             }
         }
 
-        public async Task ProcessJsonEntry(JsonElement element)
+        private async Task ProcessJsonEntry(JsonElement element)
         {
             try
             {
@@ -65,8 +65,19 @@ namespace CrazyLibraryMVC.Services
                 string bookId = await ProcessBookData(bookElement, authorId);
 
                 // Process Customer data
+                int customerId = await ProcessCustomerData(customerElement);
 
-                
+                // Process BookHistory data
+                // If the action type is Borrow, pass the actionDateTime as the borrowDate, else as the return date
+                if (actionType == "Borrow")
+                {
+                    await ProcessBookHistoryData(bookId, customerId, actionDateTime, null);
+                }
+                else
+                {
+                    await ProcessBookHistoryData(bookId, customerId, null, actionDateTime);
+
+                }
             }
             catch (Exception ex)
             {
@@ -131,6 +142,7 @@ namespace CrazyLibraryMVC.Services
 
             Book newBook = new Book
             {
+                Id = bookUniqueId,
                 Title = title,
                 Description = description,
                 PublicationDate = publicationDate,
@@ -178,7 +190,21 @@ namespace CrazyLibraryMVC.Services
                 BirthDate = birthDate
             };
 
-            return 1;
+            return await m_CustomerRepository.InsertCustomerAsync(newCustomer);
+        }
+
+        private async Task ProcessBookHistoryData(string bookId, int customerId, 
+            DateTime? borrowDate, DateTime? returnDate)
+        {
+            BookHistory bookHistory = new BookHistory
+            {
+                BookId = bookId,
+                CustomerId = customerId,
+                BorrowDate = borrowDate,
+                ReturnDate = returnDate
+            };
+            
+            await m_BookHistoryRepository.InsertBookHistoryAsync(bookHistory);
         }
     }
 }
